@@ -101,3 +101,35 @@ FROM tsa
 where month = 2 AND year != 2022 AND day >=17 
 AND day <= 23
 GROUP BY tsa.year;
+
+
+--Lets try out some correlations
+SELECT corr(t1.numbers,t2.numbers)
+FROM tsa t1
+JOIN tsa t2
+ON t1.month = t2.month 
+AND t1.day = t2.day
+AND t1.year = t2.year - 1
+WHERE t1.month = 2 
+    AND t1.year != 2022 
+    AND t1.day BETWEEN 10 AND 16
+;
+--showed a correlation of .24. So data for that week 
+--is correlated with data for that week a year later
+--what about correlating say first month of a year
+--with total passengers in a year? or for future months?
+
+SELECT corr(t1.yearlypass, t2.numbers)
+FROM (
+SELECT year, SUM(numbers) AS yearlypass
+FROM tsa
+GROUP BY year
+)t1
+JOIN (
+SELECT year, SUM(numbers) AS jantotal
+FROM tsa
+WHERE month = 1
+GROUP BY year
+)t2
+ON  t1.year = t2.year 
+  ;
