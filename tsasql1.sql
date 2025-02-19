@@ -102,7 +102,6 @@ where month = 2 AND year != 2022 AND day >=17
 AND day <= 23
 GROUP BY tsa.year;
 
-
 --Lets try out some correlations
 SELECT corr(t1.numbers,t2.numbers)
 FROM tsa t1
@@ -133,3 +132,23 @@ GROUP BY year
 )t2
 ON  t1.year = t2.year 
   ;
+
+CREATE TABLE percentile_test(numbers integer
+);
+
+INSERT INTO percentile_test (numbers)
+VALUES (1), (2), (3), (4), (5), (6);
+
+SELECT percentile_cont(.5)
+WITHIN GROUP (ORDER BY numbers),
+percentile_disc(.5)
+WITHIN GROUP (ORDER BY numbers)
+FROM percentile_test;
+
+ 
+SELECT AVG(tsa.numbers), tsa.date, percentile_cont(.5)
+WITHIN GROUP (ORDER BY numbers) AS median
+FROM tsa
+where month = 2 AND year != 2022 AND day >=17 
+AND day <= 23
+GROUP BY tsa.date;
